@@ -45,6 +45,46 @@ import {
         }
     }
 
+    public async declare(
+      { contract, classHash, casm, compiledClassHash }: DeclareContractPayload,
+      _transactionsDetail?: InvocationsDetails | undefined,
+    ): Promise<DeclareContractResponse> {
+      sendMessage({
+        type: "REQUEST_RIVET_DECLARE_CONTRACT",
+        data: {
+          payload: {
+            contract,
+            classHash,
+            casm,
+            compiledClassHash,
+          },
+        },
+      })
+      const { actionHash } = await waitForMessage(
+        "REQUEST_RIVET_DECLARE_CONTRACT_RES",
+        1000,
+      )
+
+      const result = await Promise.race([
+        waitForMessage("REQUEST_RIVET_DECLARE_CONTRACT_RES", 10 * 60 * 1000),
+        waitForMessage(
+          "DECLARE_RIVET_CONTRACT_ACTION_FAILED",
+          10 * 60 * 1000,
+        )
+      ])
+     
+      if (result === "error") {
+        throw Error("User abort")
+      }
+      if (result === "timeout") {
+        throw Error("User action timed out")
+      }
+   
+      return {
+        transaction_hash: result.txHash,
+        class_hash: result.classHash,
+      }
+    }
 
     public async signMessage(
       typedData: TypedData,

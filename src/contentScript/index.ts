@@ -39,6 +39,13 @@ window.addEventListener('message', async function(event) {
       window.postMessage({ ...res, type: res.type }, window.location.origin);
       return true; 
     } 
+    else if (event.data.type === 'REQUEST_RIVET_DECLARE_CONTRACT') {
+      chrome.runtime.sendMessage({ type: "REQUEST_RIVET_DECLARE_CONTRACT", data: event.data.data }, (response) => {
+      });
+      let res = await chrome.runtime.sendMessage({ type: "REQUEST_RIVET_DECLARE_CONTRACT", data: event.data.data })
+      window.postMessage({ ...res, type: res.type }, window.location.origin);
+      return true; 
+    } 
   }
 });
 
@@ -86,6 +93,25 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       try {
         let res = await chrome.runtime.sendMessage({ type: message.type, data: message.data  });
         window.postMessage({ type: "SIGN_RIVET_MESSAGE_RES", data: res }, "*");
+        sendResponse(res);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error("Error in handling message:", error.message);
+          sendResponse({ success: false, error: error.message });
+        } else {
+          console.error("An unknown error occurred", error);
+          sendResponse({ success: false, error: "An unknown error occurred" });
+        }
+      }
+    })();
+    return true;
+  }
+
+  if (message.type === 'REQUEST_RIVET_DECLARE_CONTRACT_RES') {   
+    (async () => {
+      try {
+        let res = await chrome.runtime.sendMessage({ type: message.type, data: message.data  });
+        window.postMessage({ type: "REQUEST_RIVET_DECLARE_CONTRACT_RES", data: res }, "*");
         sendResponse(res);
       } catch (error: unknown) {
         if (error instanceof Error) {

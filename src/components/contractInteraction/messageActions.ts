@@ -1,4 +1,4 @@
-import { Abi, ArraySignatureType, Call, InvocationsDetails, TypedData } from "starknet";
+import { Abi, ArraySignatureType, Call, DeclareContractPayload, InvocationsDetails, TypedData } from "starknet";
 
 export interface ExecuteTransactionRequest {
   transactions: Call | Call[]
@@ -49,10 +49,50 @@ export type ActionMessage =
       data: { signature: ArraySignatureType; data: any }
     }
 
+export type DeclareDeployMessage =
+  | {
+      type: "REQUEST_RIVET_DECLARE_CONTRACT"
+      data:  DeclareContractPayload
+    }
+  | { type: "REQUEST_RIVET_DECLARE_CONTRACT_RES"; data: any }
+  | {
+      type: "REQUEST_RIVET_DECLARE_CONTRACT_REJ"
+      data: { actionHash: string; error?: string }
+    }
+  | {
+      type: "DECLARE_RIVET_CONTRACT_ACTION_SUBMITTED"
+      data: {
+        txHash: string
+        classHash: string
+        actionHash: string
+      }
+    }
+  | {
+      type: "DECLARE_RIVET_CONTRACT_ACTION_FAILED"
+      data: { actionHash: string; error?: string }
+    }
+  | {
+      type: "REQUEST_RIVET_DEPLOY_CONTRACT_REJ"
+      data: { actionHash: string; error?: string }
+    }
+  | {
+      type: "DEPLOY_RIVET_CONTRACT_ACTION_SUBMITTED"
+      data: {
+        txHash: string
+        deployedContractAddress: string
+        actionHash: string
+      }
+    }
+  | {
+      type: "DEPLOY_RIVET_CONTRACT_ACTION_FAILED"
+      data: { actionHash: string; error: string }
+    }
+    
 export type MessageType =
     | PreAuthorisationMessage
     | TransactionMessage
-    | ActionMessage;
+    | ActionMessage
+    | DeclareDeployMessage;
 
 export type WindowMessageType = MessageType & {
     forwarded?: boolean
