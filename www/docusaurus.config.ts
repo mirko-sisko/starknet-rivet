@@ -64,6 +64,11 @@ const config: Config = {
           position: 'left',
         },
         {
+          type: 'docsVersionDropdown',
+          dropdownActiveClassDisabled: true,
+          position: 'left',
+        },
+        {
           label: 'GitHub',
           href: 'https://github.com/0xSpaceShard/starknet-rivet',
           position: 'right',
