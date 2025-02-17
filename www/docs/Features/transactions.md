@@ -6,7 +6,7 @@ sidebar_position: 7
 
 ### View transactions
 
-You are able to view all of the transactions on the Transactions tab.
+You are able to view all of the transactions on the Transactions tab. Test for a new version.
 
 ![](../assets/features/transactions/transactions_1.png)
 
